@@ -1,0 +1,87 @@
+# Repo-root ignores, covering every phase.
+#
+# These live at the root deliberately: when the repo was split into phase-1/ and
+# phase-2/, the original .gitignore went with phase-1, which left phase-2 with no
+# rules at all — API keys, virtualenvs, node_modules and the database were all
+# committable. One file now covers both phases and any phase added later.
+#
+# Note on anchoring: a pattern with NO slash (".env", "node_modules/") matches at
+# any depth, but a pattern that CONTAINS a slash is anchored to this directory.
+# So "scripts/foo/*.json" would only ever match <root>/scripts/foo/ — never
+# phase-2/backend/scripts/foo/. Nested paths therefore need a leading "**/".
+
+# ---------------- secrets / config ----------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials
+aws.json
+
+# ---------------- python ----------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---------------- databases ----------------
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ---------------- node / frontend ----------------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------------- generated media ----------------
+# Rendered post images, ad creatives and charts. Reproducible output, pruned to
+# MEDIA_MAX_FILES at runtime — never source.
+generated_media/
+
+# ---------------- evaluation reports ----------------
+# The harness writes a JSON + markdown report per run. Keep the committed set
+# curated by hand (the recorded baseline is worth keeping; 40 scratch runs are
+# not), so ignore them by default and force-add the ones that matter:
+#     git add -f phase-2/backend/scripts/marketing_eval/reports/<name>.md
+# The leading **/ matters: without it these patterns are anchored to the repo
+# root and silently match nothing.
+**/marketing_eval/reports/*.json
+**/marketing_eval/reports/*.md
+
+# ---------------- local backups ----------------
+.backup/
+*.bak
+
+# ---------------- editors / os ----------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---------------- logs ----------------
+logs/
+*.log
+
+# Database backups taken before migrations/wipes. They contain real user
+# rows and are several MB each; useful locally, never in history.
+*.db.bak-*
